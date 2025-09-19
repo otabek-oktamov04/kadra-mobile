@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'Lexend-Bold',
     color: '#111827', // gray-900
     marginBottom: 8,
   },
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     color: '#111827', // gray-900
-    fontWeight: '500',
+    fontFamily: 'Lexend-Bold',
     marginBottom: 8,
     fontSize: 14,
   },
@@ -358,6 +358,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     color: '#111827', // gray-900
     fontSize: 16,
+    fontFamily: 'Lexend-Bold',
     lineHeight: 20,
   },
   optionsContainer: {
@@ -390,11 +391,11 @@ const styles = StyleSheet.create({
   },
   rememberText: {
     color: '#111827', // gray-900
-    fontWeight: '500',
+    fontFamily: 'Lexend-Bold',
   },
   forgotText: {
     color: '#7152F3', // Primary color
-    fontWeight: '500',
+    fontFamily: 'Lexend-Bold',
   },
   loginButton: {
     backgroundColor: '#7152F3', // Primary color
@@ -410,7 +411,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: 'white',
     fontSize: 18,
-    fontWeight: '600',
+    fontFamily: 'Lexend-Bold',
     backgroundColor: '#7152F3',
   },
 });

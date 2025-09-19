@@ -40,6 +40,10 @@
         }
       ]
     ],
+    "fonts": [
+      "./assets/fonts/Lexend-Regular.ttf",
+      "./assets/fonts/Lexend-Bold.ttf"
+    ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
