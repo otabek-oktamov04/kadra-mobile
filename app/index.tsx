@@ -6,7 +6,7 @@ export default function IndexScreen() {
   useEffect(() => {
     // Small delay to ensure proper initialization
     const timer = setTimeout(() => {
-      router.replace('/login');
+      router.replace('/webview');
     }, 100);
 
     return () => clearTimeout(timer);
@@ -14,7 +14,7 @@ export default function IndexScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Loading...</Text>
+      <Text style={styles.text}>Loading KADRA App...</Text>
     </View>
   );
 }

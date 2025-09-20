@@ -13,8 +13,8 @@ export default function LoginScreen() {
   const handleLogin = () => {
     // Simple login validation - accept any email and password
     if (email && password) {
-      // Navigate to dashboard
-      router.replace('/dashboard');
+      // Navigate to WebView
+      router.replace('/webview');
     } else {
       alert('Please enter both email and password.');
     }

@@ -2,10 +2,12 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Dimensions, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
+import Sidebar from '../components/Sidebar';
 const { width, height } = Dimensions.get('window');
 
 export default function DashboardScreen() {
   const [searchText, setSearchText] = useState('');
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   const handleLogout = () => {
     Alert.alert(
@@ -19,7 +21,7 @@ export default function DashboardScreen() {
   };
 
   const handleMenuPress = () => {
-    Alert.alert('Menu', 'Menu functionality will be implemented soon!');
+    setIsSidebarVisible(true);
   };
 
   const handleNotificationPress = () => {
@@ -369,6 +371,13 @@ export default function DashboardScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+      {/* Sidebar */}
+      <Sidebar
+        isVisible={isSidebarVisible}
+        onClose={() => setIsSidebarVisible(false)}
+        currentPage="dashboard"
+      />
 
       {/* Header */}
       <View style={styles.header}>
