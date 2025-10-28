@@ -9,7 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to the camera to use camera features in the web content.",
+        "NSMicrophoneUsageDescription": "This app needs access to the microphone to use audio features in the web content.",
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to enable location-based features in the web content."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -18,6 +23,10 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
@@ -37,6 +46,14 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to use camera features in the web content.",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone to use audio features in the web content.",
+          "recordAudioAndroid": true
         }
       ]
     ],
