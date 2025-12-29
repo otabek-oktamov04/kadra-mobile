@@ -1,6 +1,6 @@
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -22,7 +22,9 @@ export default function WebViewScreen() {
   const [microphonePermission, setMicrophonePermission] = useState<
     string | null
   >(null);
-  const [locationPermission, setLocationPermission] = useState<string | null>(null);
+  const [locationPermission, setLocationPermission] = useState<string | null>(
+    null
+  );
 
   // Request permissions on component mount
   useEffect(() => {
@@ -50,7 +52,8 @@ export default function WebViewScreen() {
       setMicrophonePermission(microphoneStatus.status);
 
       // Request foreground location permission
-      const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
+      const { status: locationStatus } =
+        await Location.requestForegroundPermissionsAsync();
       setLocationPermission(locationStatus);
 
       if (cameraStatus.status !== "granted") {
@@ -105,7 +108,8 @@ export default function WebViewScreen() {
         // Check if we have the necessary permissions
         const cameraStatus = await Camera.getCameraPermissionsAsync();
         const microphoneStatus = await Camera.getMicrophonePermissionsAsync();
-        const { status: foregroundLocationStatus } = await Location.getForegroundPermissionsAsync();
+        const { status: foregroundLocationStatus } =
+          await Location.getForegroundPermissionsAsync();
 
         // If we don't have permissions, request them
         if (
@@ -116,7 +120,8 @@ export default function WebViewScreen() {
           const newCameraStatus = await Camera.requestCameraPermissionsAsync();
           const newMicrophoneStatus =
             await Camera.requestMicrophonePermissionsAsync();
-          const { status: newLocationStatus } = await Location.requestForegroundPermissionsAsync();
+          const { status: newLocationStatus } =
+            await Location.requestForegroundPermissionsAsync();
 
           if (
             newCameraStatus.status === "granted" &&
@@ -181,9 +186,7 @@ export default function WebViewScreen() {
         }}
         javaScriptEnabled={true}
         mediaPlaybackRequiresUserAction={false} // Allow media playback without user interaction
-        {...(Platform.OS === "ios"
-          ? { allowsInlineMediaPlayback: true }
-          : {})}
+        {...(Platform.OS === "ios" ? { allowsInlineMediaPlayback: true } : {})}
         geolocationEnabled={true}
         onError={handleError}
         onHttpError={() => {
@@ -205,19 +208,21 @@ export default function WebViewScreen() {
         showsVerticalScrollIndicator={false}
         {...(Platform.OS === "ios"
           ? {
-            pinchGestureEnabled: false,
-            allowsBackForwardNavigationGestures: false,
-            decelerationRate: "normal" as const,
-            automaticallyAdjustContentInsets: false,
-            contentInsetAdjustmentBehavior: "never" as const,
-          }
+              pinchGestureEnabled: false,
+              allowsBackForwardNavigationGestures: false,
+              decelerationRate: "normal" as const,
+              automaticallyAdjustContentInsets: false,
+              contentInsetAdjustmentBehavior: "never" as const,
+            }
           : {})}
         onShouldStartLoadWithRequest={() => true}
         onMessage={() => {}}
         onPermissionRequest={handlePermissionRequest}
         injectedJavaScript={`
           // Expose simple availability flag to web content
-          window.__expoHasLocationPermission = ${locationPermission === "granted" ? "true" : "false"};
+          window.__expoHasLocationPermission = ${
+            locationPermission === "granted" ? "true" : "false"
+          };
           // Remove existing viewport meta tags
           const existingViewport = document.querySelector('meta[name="viewport"]');
           if (existingViewport) {
