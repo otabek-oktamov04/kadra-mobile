@@ -13,6 +13,7 @@ eas login
 ```
 
 **Verify installation:**
+
 ```bash
 eas --version
 ```
@@ -43,6 +44,7 @@ You'll need this when setting up TestFlight:
 ## ✅ 5. Prepare Screenshots (Optional but Recommended)
 
 For TestFlight, you'll want:
+
 - **App Icon**: Already have `./assets/images/icon.png` ✅
 - **Screenshots**: Take screenshots of your app on different screen sizes:
   - iPhone 6.7" (iPhone 14 Pro Max, etc.)
@@ -65,6 +67,7 @@ npm run web
 ## ✅ 7. Check App Configuration
 
 Review your `app.json`:
+
 - ✅ App name is correct
 - ✅ Version number is set (currently 1.0.0)
 - ✅ Icon path is correct
@@ -73,12 +76,14 @@ Review your `app.json`:
 ## ✅ 8. Prepare TestFlight Tester List
 
 Think about who will test your app:
+
 - **Internal Testers**: Team members with App Store Connect access (up to 100)
 - **External Testers**: Regular users (up to 10,000, requires review)
 
 ## ✅ 9. Review Permissions
 
 Your app requests these permissions (already configured in `app.json`):
+
 - ✅ Camera access
 - ✅ Microphone access
 - ✅ Location access
@@ -127,4 +132,3 @@ eas build:configure
 - Once Bundle ID is set, it cannot be changed easily
 - Version numbers must increment for each new build
 - Build numbers are auto-incremented by EAS
-
