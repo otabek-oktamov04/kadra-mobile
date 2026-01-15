@@ -2,7 +2,7 @@
   "expo": {
     "name": "kadra-mobile-app",
     "slug": "kadra-mobile-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "kadramobileapp",
@@ -10,6 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "icon": "./assets/images/icon.png",
+      "buildNumber": "2",
       "supportsTablet": true,
       "bundleIdentifier": "com.mohirlar.kadramobileapp",
       "infoPlist": {
@@ -17,7 +18,8 @@
         "NSMicrophoneUsageDescription": "This app needs access to the microphone to use audio features in the web content.",
         "NSLocationWhenInUseUsageDescription": "This app uses your location to enable location-based features in the web content.",
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "usesIcloudStorage": false
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +32,9 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.VIBRATE"
       ],
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
@@ -59,6 +63,14 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to use camera features in the web content.",
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone to use audio features in the web content.",
           "recordAudioAndroid": true
+        }
+      ],
+      [
+        "@notifee/react-native",
+        {
+          "android": {
+            "defaultChannelId": "default"
+          }
         }
       ]
     ],
