@@ -18,8 +18,7 @@
         "NSMicrophoneUsageDescription": "This app needs access to the microphone to use audio features in the web content.",
         "NSLocationWhenInUseUsageDescription": "This app uses your location to enable location-based features in the web content.",
         "ITSAppUsesNonExemptEncryption": false
-      },
-      "usesIcloudStorage": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -63,14 +62,6 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to use camera features in the web content.",
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone to use audio features in the web content.",
           "recordAudioAndroid": true
-        }
-      ],
-      [
-        "@notifee/react-native",
-        {
-          "android": {
-            "defaultChannelId": "default"
-          }
         }
       ]
     ],
