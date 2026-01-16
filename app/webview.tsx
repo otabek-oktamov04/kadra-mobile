@@ -1,6 +1,7 @@
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
-import { useEffect, useRef, useState } from "react";
+import * as Notifications from "expo-notifications";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -12,7 +13,6 @@ import {
   View,
 } from "react-native";
 import { WebView } from "react-native-webview";
-import notifee, { AndroidImportance, EventType } from "@notifee/react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,7 +29,7 @@ export default function WebViewScreen() {
   );
 
   // Handle notification press (when user taps notification)
-  const handleNotificationPress = (data: any) => {
+  const handleNotificationPress = useCallback((data: any) => {
     if (data?.route && webViewRef.current) {
       // Navigate to the route in WebView
       const route = data.route.startsWith("/") ? data.route : `/${data.route}`;
@@ -41,70 +41,85 @@ export default function WebViewScreen() {
         true;
       `);
     }
-  };
+  }, []);
 
   // Handle notification action button press
-  const handleNotificationActionPress = (data: any, actionId?: string) => {
-    if (actionId && data?.actions) {
-      const action = data.actions.find((a: any) => a.id === actionId);
-      if (action?.route && webViewRef.current) {
-        const route = action.route.startsWith("/") ? action.route : `/${action.route}`;
-        const baseUrl = "https://dev.kadra.uz";
-        const fullUrl = `${baseUrl}${route}`;
+  const handleNotificationActionPress = useCallback(
+    (data: any, actionId?: string) => {
+      if (actionId && data?.actions) {
+        const action = data.actions.find((a: any) => a.id === actionId);
+        if (action?.route && webViewRef.current) {
+          const route = action.route.startsWith("/")
+            ? action.route
+            : `/${action.route}`;
+          const baseUrl = "https://dev.kadra.uz";
+          const fullUrl = `${baseUrl}${route}`;
 
-        webViewRef.current.injectJavaScript(`
+          webViewRef.current.injectJavaScript(`
           window.location.href = '${fullUrl}';
           true;
         `);
+        }
+      } else {
+        handleNotificationPress(data);
       }
-    } else {
-      handleNotificationPress(data);
-    }
-  };
+    },
+    [handleNotificationPress]
+  );
 
   // Request permissions on component mount
   useEffect(() => {
     requestPermissions();
-    setupNotifications();
+    let subscription: Notifications.Subscription | null = null;
+
+    setupNotifications().then((sub) => {
+      subscription = sub;
+    });
+
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
   }, []);
 
   // Set up notification channels and handlers
-  const setupNotifications = async () => {
-    try {
-      // Create a default channel for Android
-      if (Platform.OS === "android") {
-        await notifee.createChannel({
-          id: "default",
-          name: "Default Channel",
-          importance: AndroidImportance.HIGH,
-          sound: "default",
-          vibration: true,
+  const setupNotifications =
+    async (): Promise<Notifications.Subscription | null> => {
+      try {
+        // Configure how notifications are handled when app is in foreground
+        Notifications.setNotificationHandler({
+          handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: true,
+            shouldShowBanner: true,
+            shouldShowList: true,
+          }),
         });
+
+        // Request notification permissions
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status !== "granted") {
+          console.warn("Notification permissions not granted");
+          return null;
+        }
+
+        // Set up notification response handler (when user taps notification)
+        const subscription =
+          Notifications.addNotificationResponseReceivedListener(
+            (response: Notifications.NotificationResponse) => {
+              const data = response.notification.request.content.data;
+              handleNotificationPress(data);
+            }
+          );
+
+        return subscription;
+      } catch (error) {
+        console.error("Error setting up notifications:", error);
+        return null;
       }
-
-      // Request notification permissions
-      await notifee.requestPermission();
-
-      // Set up notification event handlers
-      notifee.onForegroundEvent(({ type, detail }) => {
-        if (type === EventType.PRESS) {
-          handleNotificationPress(detail.notification?.data);
-        } else if (type === EventType.ACTION_PRESS) {
-          handleNotificationActionPress(detail.notification?.data, detail.pressAction?.id);
-        }
-      });
-
-      notifee.onBackgroundEvent(async ({ type, detail }) => {
-        if (type === EventType.PRESS) {
-          handleNotificationPress(detail.notification?.data);
-        } else if (type === EventType.ACTION_PRESS) {
-          handleNotificationActionPress(detail.notification?.data, detail.pressAction?.id);
-        }
-      });
-    } catch (error) {
-      console.error("Error setting up notifications:", error);
-    }
-  };
+    };
 
   // Safety timeout: if load takes too long, show error state
   useEffect(() => {
@@ -187,28 +202,14 @@ export default function WebViewScreen() {
   // Display a notification
   const handleNotification = async (payload: any) => {
     try {
-      const channelId = Platform.OS === "android" ? "default" : undefined;
-
-      await notifee.displayNotification({
-        title: payload.title || "Notification",
-        body: payload.body || "",
-        android: {
-          channelId,
-          sound: payload.sound || "default",
-          pressAction: {
-            id: "default",
-          },
-          vibrationPattern: payload.vibrate || [200, 100, 200],
-          importance: AndroidImportance.HIGH,
-          tag: payload.tag,
-          autoCancel: true,
-          smallIcon: "ic_launcher",
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: payload.title || "Notification",
+          body: payload.body || "",
+          sound: payload.sound ? true : false,
+          data: payload.data || {},
         },
-        ios: {
-          sound: payload.sound || "default",
-          badge: payload.badge ? 1 : undefined,
-        },
-        data: payload.data || {},
+        trigger: null, // Show immediately
       });
     } catch (error) {
       console.error("Error displaying notification:", error);
@@ -218,70 +219,22 @@ export default function WebViewScreen() {
   // Display a notification with action buttons
   const handleNotificationWithActions = async (payload: any) => {
     try {
-      const channelId = Platform.OS === "android" ? "default" : undefined;
-
-      await notifee.displayNotification({
-        title: payload.title || "Notification",
-        body: payload.body || "",
-        android: {
-          channelId,
-          sound: payload.sound || "default",
-          pressAction: {
-            id: "default",
+      // Note: expo-notifications has limited action button support
+      // For full action button support, you may need to use a different approach
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: payload.title || "Notification",
+          body: payload.body || "",
+          sound: payload.sound ? true : false,
+          data: {
+            ...payload.data,
+            actions: payload.actions, // Store actions in data for reference
           },
-          actions: payload.actions?.map((action: any) => ({
-            title: action.title,
-            pressAction: {
-              id: action.id,
-            },
-          })),
-          vibrationPattern: payload.vibrate || [200, 100, 200],
-          importance: AndroidImportance.HIGH,
-          tag: payload.tag,
-          autoCancel: true,
         },
-        ios: {
-          sound: payload.sound || "default",
-          badge: payload.badge ? 1 : undefined,
-        },
-        data: payload.data || {},
+        trigger: null, // Show immediately
       });
     } catch (error) {
       console.error("Error displaying notification with actions:", error);
-    }
-  };
-
-  // Handle notification press (when user taps notification)
-  const handleNotificationPress = (data: any) => {
-    if (data?.route && webViewRef.current) {
-      // Navigate to the route in WebView
-      const route = data.route.startsWith("/") ? data.route : `/${data.route}`;
-      const baseUrl = "https://dev.kadra.uz";
-      const fullUrl = `${baseUrl}${route}`;
-
-      webViewRef.current.injectJavaScript(`
-        window.location.href = '${fullUrl}';
-        true;
-      `);
-    }
-  };
-
-  // Handle notification action button press
-  const handleNotificationActionPress = (data: any, actionId?: string) => {
-    if (actionId && data?.actions) {
-      const action = data.actions.find((a: any) => a.id === actionId);
-      if (action?.route && webViewRef.current) {
-        const route = action.route.startsWith("/") ? action.route : `/${action.route}`;
-        const baseUrl = "https://dev.kadra.uz";
-        const fullUrl = `${baseUrl}${route}`;
-
-        webViewRef.current.injectJavaScript(`
-          window.location.href = '${fullUrl}';
-          true;
-        `);
-      }
-    } else {
-      handleNotificationPress(data);
     }
   };
 
@@ -408,7 +361,9 @@ export default function WebViewScreen() {
           : {})}
         onShouldStartLoadWithRequest={() => true}
         onMessage={handleMessage}
-        onPermissionRequest={handlePermissionRequest}
+        {...(Platform.OS === "android"
+          ? { onPermissionRequest: handlePermissionRequest }
+          : {})}
         ref={webViewRef}
         injectedJavaScript={`
           // Expose simple availability flag to web content

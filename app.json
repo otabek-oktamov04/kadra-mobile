@@ -63,6 +63,14 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone to use audio features in the web content.",
           "recordAudioAndroid": true
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#ffffff",
+          "sounds": []
+        }
       ]
     ],
     "fonts": [
