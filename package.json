@@ -4,11 +4,18 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:clean": "expo start --clear",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "build:ios": "eas build --platform ios --profile production",
+    "build:ios:preview": "eas build --platform ios --profile preview",
+    "submit:ios": "eas submit --platform ios --profile production",
+    "submit:ios:interactive": "eas submit --platform ios",
+    "build-and-submit:ios": "eas build --platform ios --profile production --auto-submit",
+    "clean": "expo start --clear"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
